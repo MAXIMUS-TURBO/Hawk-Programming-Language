@@ -13,6 +13,7 @@ This scanner is like the lex analyzer of the program
 
 
 public class scanner {
+
     public static void lex() {
         
     }
