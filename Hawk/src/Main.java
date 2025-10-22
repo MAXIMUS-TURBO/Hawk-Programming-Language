@@ -1,3 +1,29 @@
-public class Main{
-    
+import java.io.IOException;
+
+/*****************************************************************************
+
+    Hawk Programming Language
+    Main.java
+
+    Steps of Compilation:
+    1. Main gets file and passes to Scanner
+    2. Scanner break it into tokens and passes to Parser
+    3. Parser applies grammar rules to tokens
+
+******************************************************************************/
+
+public class Main { public static void main(String[] args) {
+        
+    //testing scanner
+    try {
+            Scanner scanner = new Scanner("testfile.txt"); // your source file
+            Token token;
+            do {
+                token = scanner.getNextToken();
+                System.out.println(token); // prints using Token.toString()
+            } while (token.type != Token.Type.EOF);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }
