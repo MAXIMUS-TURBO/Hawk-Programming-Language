@@ -61,14 +61,16 @@ public class Scanner {
 
     private void skipWhitespace() {
         // Skip spaces
+
+        while (pos < source.length()) {
         char c = source.charAt(pos);
-        while (pos < source.length()) { //while there are characters left
-            if (c == ' ' || c == '\t'|| c == '\n') { 
-                if (source.charAt(pos) == '\n') lineNum++; //track line number is newline
-            } else break; //end loop if not whitespace
-        pos++; //move to next character if whitespace
+        if (c == ' ' || c == '\t' || c == '\n') {
+            if (c == '\n') lineNum++;
+            pos++;
+        } else {break;}
         }
-    }
+        }
+
 
     private char peek() { //peak at next character without consuming it
             return (pos + 1 < source.length()) ? source.charAt(pos + 1) : '\0';

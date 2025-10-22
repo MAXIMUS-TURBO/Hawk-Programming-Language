@@ -1,6 +1,11 @@
 program
+x, y: double; e: int;
 begin
-  x := 10;
-  y := 3.14;
-  if x > y then output x;
-end
+input x; y := 1;
+if (x > 0) then e := 0;
+while (x > 0) loop
+y := y * x; x := x -1;
+end loop; else
+e := 1;
+end if;
+output e, x, y; end;

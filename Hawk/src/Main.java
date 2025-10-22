@@ -16,7 +16,7 @@ public class Main { public static void main(String[] args) {
         
     //testing scanner
     try {
-            Scanner scanner = new Scanner("testfile.txt"); // your source file
+            Scanner scanner = new Scanner("/workspaces/Hawk-Programming-Language/Hawk/src/testfile.txt"); // your source file
             Token token;
             do {
                 token = scanner.getNextToken();
