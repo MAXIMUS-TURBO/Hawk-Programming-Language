@@ -176,10 +176,10 @@ private void STMT() {
         INPUT(); 
     } else if (currentToken.value.equals("output")) {
         OUTPUT();
-    }else if (currentToken.value.equals("isftmt")) {
+    }else if (currentToken.value.equals("if")) {
         System.out.println("tbc");
     }
-    else if (currentToken.value.equals("whilestmt")) {
+    else if (currentToken.value.equals("while")) {
         System.out.println("tbc");
     }else {
         error("Invalid statement start: " + currentToken.value); //if statement does not start with ID, input, or output raise error
