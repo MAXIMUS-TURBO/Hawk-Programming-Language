@@ -118,7 +118,7 @@ public class Parser {
     //stores declared identifiers in symbol table
     private void ID_LIST(boolean declare) {
     System.out.println("ID_LIST");
-
+        //if token is has a comma after this id, it must be followed by another id or else error
     if (currentToken.type == Token.Type.ID) { // At least one ID
         String name = currentToken.value; //identifier name
         //if we are declaring the identifier, store in symbol table with unknown type for now else check if it has been declared
@@ -127,53 +127,81 @@ public class Parser {
         else
             symbols.checkDeclared(name, currentToken.line); 
         match(Token.Type.ID); 
-
-        while (currentToken.type == Token.Type.COMMA) { // More IDs must be separated by commas, followed by more IDs
+        if (currentToken.type == Token.Type.COMMA) { // More IDs must be separated by commas, followed by another IDs
             match(Token.Type.COMMA); 
+            // Token peek = scanner.getNextToken();
             if (currentToken.type == Token.Type.ID) {
-                name = currentToken.value;
-                if (declare)
-                    symbols.declare(name, "unknown", currentToken.line); //declare in symbol table
-                else
-                    symbols.checkDeclared(name, currentToken.line);
-                match(Token.Type.ID);
+                ID_LIST(declare); //recursive call to process next ID
             } else {
                 error("Expected identifier after ','"); // Error if no ID after comma
             }
+            
+            // if (currentToken.type == Token.Type.ID) {
+            //     name = currentToken.value;
+            //     if (declare)
+            //         symbols.declare(name, "unknown", currentToken.line); //declare in symbol table
+            //     else
+            //         symbols.checkDeclared(name, currentToken.line);
+            //     match(Token.Type.ID);
+            // } 
         }
+            // else {
+            //     error("Expected identifier after ','"); // Error if no ID after comma
+            // }
+        
     } else {
         error("Expected identifier in ID_LIST"); // Error if no ID found
     }
 }
-// Rule 06: STMT_SEC 🡪 STMT | STMT STMT_SEC
+// Rule 06: STMT_SEC 🡪 STMT | STMT STMT_SEC 
 //statement section can have multiple statements or just a single statement
 private void STMT_SEC() { 
     System.out.println("STMT_SEC");
     STMT();
     //while current token is a reserved words input, output, if, and while, or an identifier type (for assign) then continue processing statements
     // Rule 07: STMT 🡪	ASSIGN | IFSTMT | WHILESTMT | INPUT | OUTPUT 
-    while (currentToken.type == Token.Type.RESERVED && 
-           (currentToken.value.equals("input") || currentToken.value.equals("output") ||
-            currentToken.value.equals("if") || currentToken.value.equals("while") ||
-            currentToken.type == Token.Type.ID)) {
-        STMT(); 
-    }
+    while (currentToken.type == Token.Type.RESERVED && (currentToken.value.equals("input") || currentToken.value.equals("output") ||
+            currentToken.value.equals("if") || currentToken.value.equals("while")) ||
+            currentToken.type == Token.Type.ID) 
+    {STMT_SEC();}
+
 }
 // Rule 07: STMT 🡪	ASSIGN | IFSTMT | WHILESTMT | INPUT | OUTPUT 
 private void STMT() {
     System.out.println("STMT");
 
-    if (currentToken.type == Token.Type.ID) { // Assignment starts with ID
-        ASSIGN();
+    if (currentToken.type == Token.Type.ID) { 
+        ASSIGN(); // Assignment starts with ID
     } else if (currentToken.value.equals("input")) {
-        INPUT();
+        INPUT(); 
     } else if (currentToken.value.equals("output")) {
         OUTPUT();
-    } else {
+    }else if (currentToken.value.equals("isftmt")) {
+        System.out.println("tbc");
+    }
+    else if (currentToken.value.equals("whilestmt")) {
+        System.out.println("tbc");
+    }else {
         error("Invalid statement start: " + currentToken.value); //if statement does not start with ID, input, or output raise error
     }
 }
-
+// Rule 11: INPUT 🡪	input ID_LIST; //input followed by list of id already declared in symbol table followed by ;
+private void INPUT() {
+    System.out.println("INPUT");
+    match("input");
+    ID_LIST(false); // must already be declared
+    match(Token.Type.SEMI); //must end with semicolon
+}
+// Rule 12: OUTPUT 🡪 output ID_LIST; | output NUM;
+private void OUTPUT() {
+    System.out.println("OUTPUT");
+    match("output");
+    if (currentToken.type == Token.Type.NUM)
+        match(Token.Type.NUM);
+    else
+        ID_LIST(false);
+    match(Token.Type.SEMI);
+}
 // Rule 08: ASSIGN 🡪	ID := EXPR ; //id followed by := followed by an expression 
 private void ASSIGN() {
     System.out.println("ASSIGN");
@@ -183,6 +211,7 @@ private void ASSIGN() {
     EXPR(); //match expression after assignment
     match(Token.Type.SEMI);
 }
+
 // Rule 13: EXPR 🡪 FACTOR | FACTOR + EXPR | FACTOR - EXPR //expression enters factor first followed by + or -
 private void EXPR() {
     System.out.println("EXPR");
@@ -218,23 +247,6 @@ private void OPERAND() {
     } else {
         error("Invalid operand: " + currentToken.value); //raise error if operand is not num, id, or (expr)
     }
-}
-// Rule 11: INPUT 🡪	input ID_LIST;
-private void INPUT() {
-    System.out.println("INPUT");
-    match("input");
-    ID_LIST(false); // must already be declared
-    match(Token.Type.SEMI);
-}
-// Rule 12: OUTPUT 🡪 output ID_LIST; | output NUM;
-private void OUTPUT() {
-    System.out.println("OUTPUT");
-    match("output");
-    if (currentToken.type == Token.Type.NUM)
-        match(Token.Type.NUM);
-    else
-        ID_LIST(false);
-    match(Token.Type.SEMI);
 }
 
 

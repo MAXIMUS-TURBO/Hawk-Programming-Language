@@ -85,7 +85,8 @@ public class Scanner {
         }
 
         char c = source.charAt(pos);
-
+        //debugging line to see current character being processed
+        // System.out.println("Current char: '" + c + "' at line " + lineNum); 
         // Track newlines
         if (c == '\n') {
             lineNum++;  // Increment line number
@@ -226,7 +227,7 @@ public class Scanner {
                 pos++;
                 return new Token(Token.Type.COMMA, ",", lineNum);
         }
-
+        
         // Illegal character
         System.err.println("Lexical error at line " + lineNum + ": Illegal symbol '" + c + "'");
         System.exit(1);
