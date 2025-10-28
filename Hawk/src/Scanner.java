@@ -6,12 +6,7 @@
 This scanner is like the lexical analyzer of the program
 
 >keep track of line numbers
->unusual identifiers
-    -redeclared
-    -undeclared
 >Throw errors for illegal tokens
->IMPORTANT: store all declared variables in a symbol table
-
 
 Reserved words: program, begin, end, if, then, else, input, output, int, float, double, while, loop
 Operators: :=, <, >, =, <>, +, -, *, /, (, )
@@ -23,13 +18,18 @@ Throw errors for:
     >Illegal symbol DONE 
     >Redeclared identifier
     >Use of undeclared identifier
-    >Illegal number format
+    >Illegal number format DONE
 
 steps to implement:
 1. Reads file line by line.
 2. Uses regex or manual character scanning.
 3. Returns a list (or stream) of Token objects.
 
+
+notes: missing implementation 
+    >for symbol table and undeclared/redeclared checks
+    >max 10 digit number check DONE
+    >illegal number format (too many decimals or ending with decimal) DONE
 ***********************************************************/
 
 
@@ -57,11 +57,10 @@ public class Scanner {
     }
     //create set of reserved words
     private static final ArrayList<String> RESERVED = new ArrayList<>
-    (Arrays.asList("program", "begin", "end", "if", "then", "else","input", "output", "int", "while", "loop"));
+    (Arrays.asList("program", "begin", "end", "if", "then", "else","input", "output", "int", "double" ,"float" , "while", "loop"));
 
     private void skipWhitespace() {
-        // Skip spaces
-
+        // Skip spaces, tabs, and newlines
         while (pos < source.length()) {
         char c = source.charAt(pos);
         if (c == ' ' || c == '\t' || c == '\n') {
@@ -80,7 +79,7 @@ public class Scanner {
         skipWhitespace();
         //c is the current character
         
-            // check   End of file    after skipping whitespace
+        // check   End of file    after skipping whitespace
         if (pos >= source.length()) {
             return new Token(Token.Type.EOF, "EOF", lineNum);
         }
@@ -95,38 +94,73 @@ public class Scanner {
         }
 
         
-        // Check if Number first
+        // Check if Number first (to avoid confusion with IDs starting with digits)
+        //10 digits max checking implemented
         if (c >= '0' && c <= '9') {
+            int countDigits = 0; //counter for digits
+
             // make a char array for the number
             char[] numChars = new char[source.length() - pos];
             int len = 0;
-
+           
             // Read the first digit
             numChars[len++] = c;
             pos++;
+            countDigits++;
 
             //check for floats
             boolean hasDecimal = false;
 
-            // Read remaining digits or a decimal point
             while (pos < source.length()) {
                 char ch = source.charAt(pos); //ch is char at current pos
+                
                 if (ch >= '0' && ch <= '9') { 
                     numChars[len++] = ch;
                     pos++;
+                    countDigits++;
                 }
                 else if (ch == '.' && !hasDecimal) { // Allow only one decimal point
                         numChars[len++] = ch;
                         pos++;
                         hasDecimal = true;
-                } 
-                else {break;} // stop when it's not a digit or '.'
+                        //also make sure it is followed by at least one digit or else error
+                        if (pos < source.length()) {
+                            char nextCh = source.charAt(pos);
+                            if (nextCh >= '0' && nextCh <= '9') {
+                                // Read the digit after decimal
+                                numChars[len++] = nextCh;
+                                pos++;
+                                countDigits++;
+                            } else {
+                                System.err.println("Lexical error at line " + lineNum + ": Illegal number format, decimal point not followed by digit.");
+                                System.exit(1);
+                            }
+                        } 
+                        else { //if decimal is last character then error
+                            System.err.println("Lexical error at line " + lineNum + ": Illegal number format, decimal point not followed by digit.");
+                            System.exit(1);
+                        }
+                        
+                } //check if a decimal is repeated twice within same number
+                else if (ch == '.' && hasDecimal) {
+                            System.err.println("Lexical error at line " + lineNum + ": Illegal number format, multiple decimal points.");
+                            System.exit(1);
+                        } 
+                else {break;} // stop when it's not a number or decimal
             }
 
             // Create the string from the char array
             String num = new String(numChars, 0, len);
+            if (countDigits > 10){ //if more than 10 digits then return error
+                    System.err.println("Error at line " + lineNum +": '"+ num+"' has " + countDigits + " digits. Max digits allowed: 10.");
+                    System.exit(1);
+                    return null;
+                    //stop the entire program if more than 10 digits
+                    }
             return new Token(Token.Type.NUM, num, lineNum);
+            
         }
+        
 
         // Check identifiers or reserved words
         if ((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || c == '_') {
@@ -198,5 +232,6 @@ public class Scanner {
         System.exit(1);
         return null;
     }
+
 
 }

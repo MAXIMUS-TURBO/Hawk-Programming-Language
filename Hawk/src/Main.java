@@ -12,7 +12,9 @@ import java.io.IOException;
 
 ******************************************************************************/
 
-public class Main { public static void main(String[] args) {
+public class Main 
+{ 
+    public static void main(String[] args) {
         
     //testing scanner
     try {
@@ -20,10 +22,13 @@ public class Main { public static void main(String[] args) {
             Token token;
             do {
                 token = scanner.getNextToken();
-                System.out.println(token); // prints using Token.toString()
+                // System.out.println(token); // prints using Token.toString()
             } while (token.type != Token.Type.EOF);
+            // Token t;
+            // while ((t = scanner.getNextToken()).type != Token.Type.EOF) {
+            //     System.out.println(t);}
         } catch (IOException e) {
-            e.printStackTrace();
-        }
+                e.printStackTrace();
+            }
     }
 }
