@@ -145,6 +145,103 @@ public class Parser {
         error("Expected identifier in ID_LIST"); // Error if no ID found
     }
 }
+// Rule 06: STMT_SEC 🡪 STMT | STMT STMT_SEC
+//statement section can have multiple statements or just a single statement
+private void STMT_SEC() { 
+    System.out.println("STMT_SEC");
+    STMT();
+    //while current token is a reserved words input, output, if, and while, or an identifier type (for assign) then continue processing statements
+    // Rule 07: STMT 🡪	ASSIGN | IFSTMT | WHILESTMT | INPUT | OUTPUT 
+    while (currentToken.type == Token.Type.RESERVED && 
+           (currentToken.value.equals("input") || currentToken.value.equals("output") ||
+            currentToken.value.equals("if") || currentToken.value.equals("while") ||
+            currentToken.type == Token.Type.ID)) {
+        STMT(); 
+    }
+}
+// Rule 07: STMT 🡪	ASSIGN | IFSTMT | WHILESTMT | INPUT | OUTPUT 
+private void STMT() {
+    System.out.println("STMT");
+
+    if (currentToken.type == Token.Type.ID) { // Assignment starts with ID
+        ASSIGN();
+    } else if (currentToken.value.equals("input")) {
+        INPUT();
+    } else if (currentToken.value.equals("output")) {
+        OUTPUT();
+    } else {
+        error("Invalid statement start: " + currentToken.value); //if statement does not start with ID, input, or output raise error
+    }
+}
+
+// Rule 08: ASSIGN 🡪	ID := EXPR ; //id followed by := followed by an expression 
+private void ASSIGN() {
+    System.out.println("ASSIGN");
+    symbols.checkDeclared(currentToken.value, currentToken.line); //check if ID has been declared
+    match(Token.Type.ID);
+    match(Token.Type.ASSIGN);
+    EXPR(); //match expression after assignment
+    match(Token.Type.SEMI);
+}
+// Rule 13: EXPR 🡪 FACTOR | FACTOR + EXPR | FACTOR - EXPR //expression enters factor first followed by + or -
+private void EXPR() {
+    System.out.println("EXPR");
+    FACTOR();
+    if (currentToken.value.equals("+") || currentToken.value.equals("-")) {
+        currentToken = scanner.getNextToken();
+        EXPR();
+    }
+}
+// Rule 14: FACTOR 🡪 OPERAND | OPERAND * FACTOR | OPERAND / FACTOR 
+//factor enters operand first followed by * or /
+private void FACTOR() {
+    System.out.println("FACTOR");
+    OPERAND();
+    if (currentToken.value.equals("*") || currentToken.value.equals("/")) {
+        currentToken = scanner.getNextToken();
+        FACTOR();
+    }
+}
+// Rule 15: OPERAND 🡪 NUM | ID | ( EXPR )
+//operand can be a number, identifier, or  parentheses around an expression 
+private void OPERAND() {
+    System.out.println("OPERAND");
+    if (currentToken.type == Token.Type.NUM) {
+        match(Token.Type.NUM);
+    } else if (currentToken.type == Token.Type.ID) {
+        symbols.checkDeclared(currentToken.value, currentToken.line);
+        match(Token.Type.ID);
+    } else if (currentToken.type == Token.Type.LPAREN) {
+        match(Token.Type.LPAREN);
+        EXPR();
+        match(Token.Type.RPAREN);
+    } else {
+        error("Invalid operand: " + currentToken.value); //raise error if operand is not num, id, or (expr)
+    }
+}
+// Rule 11: INPUT 🡪	input ID_LIST;
+private void INPUT() {
+    System.out.println("INPUT");
+    match("input");
+    ID_LIST(false); // must already be declared
+    match(Token.Type.SEMI);
+}
+// Rule 12: OUTPUT 🡪 output ID_LIST; | output NUM;
+private void OUTPUT() {
+    System.out.println("OUTPUT");
+    match("output");
+    if (currentToken.type == Token.Type.NUM)
+        match(Token.Type.NUM);
+    else
+        ID_LIST(false);
+    match(Token.Type.SEMI);
+}
+
+
+// Rule 09: IFSTMT 🡪	if COMP then STMT_SEC end if ; |
+//                     if COMP then STMT_SEC else STMT_SEC end if ; 
+// Rule 10: WHILESTMT 🡪	while COMP loop STMT_SEC end loop ;
+// Rule 17: COMP 🡪 ( OPERAND = OPERAND ) | ( OPERAND <> OPERAND ) | ( OPERAND > OPERAND ) | ( OPERAND < OPERAND )
 
 
 
