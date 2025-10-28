@@ -49,7 +49,7 @@ public class Parser {
         currentToken = scanner.getNextToken(); //initialize first token
     }
 
-    //match function to consume expected tokens
+    //match to find expected type
     private void match(Token.Type expectedType) {
         if (currentToken.type == expectedType) {
             currentToken = scanner.getNextToken();
@@ -57,7 +57,7 @@ public class Parser {
             error("Expected " + expectedType + " but found " + currentToken.value);
         }
     }
-    //match function to consume expected tokens by value
+    //match to find expected value
     private void match(String expectedValue) {
         if (currentToken.value.equals(expectedValue)) {
             currentToken = scanner.getNextToken();
@@ -119,29 +119,30 @@ public class Parser {
     private void ID_LIST(boolean declare) {
     System.out.println("ID_LIST");
 
-    if (currentToken.type == Token.Type.ID) {
-        String name = currentToken.value;
-        if (declare)
-            symbols.declare(name, "unknown", currentToken.line);
+    if (currentToken.type == Token.Type.ID) { // At least one ID
+        String name = currentToken.value; //identifier name
+        //if we are declaring the identifier, store in symbol table with unknown type for now else check if it has been declared
+        if (declare) 
+            symbols.declare(name, "unknown", currentToken.line); //declare in symbol table
         else
-            symbols.checkDeclared(name, currentToken.line);
-        match(Token.Type.ID);
+            symbols.checkDeclared(name, currentToken.line); 
+        match(Token.Type.ID); 
 
-        while (currentToken.type == Token.Type.COMMA) {
-            match(Token.Type.COMMA);
+        while (currentToken.type == Token.Type.COMMA) { // More IDs must be separated by commas, followed by more IDs
+            match(Token.Type.COMMA); 
             if (currentToken.type == Token.Type.ID) {
                 name = currentToken.value;
                 if (declare)
-                    symbols.declare(name, "unknown", currentToken.line);
+                    symbols.declare(name, "unknown", currentToken.line); //declare in symbol table
                 else
                     symbols.checkDeclared(name, currentToken.line);
                 match(Token.Type.ID);
             } else {
-                error("Expected identifier after ','");
+                error("Expected identifier after ','"); // Error if no ID after comma
             }
         }
     } else {
-        error("Expected identifier in ID_LIST");
+        error("Expected identifier in ID_LIST"); // Error if no ID found
     }
 }
 
