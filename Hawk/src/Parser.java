@@ -82,7 +82,7 @@ public class Parser {
     match("program");  // must start with 'program'
 
     if (currentToken.type == Token.Type.ID) { // if there are optional declarations
-        DECL_SEC();
+        DECL_SEC(); //program x, y: int;
     }
 
     match("begin"); //must have 'begin' after declarations or program
@@ -102,7 +102,7 @@ public class Parser {
     //Rule 03: DECL 🡪 ID_LIST : TYPE ; //match id list to its type eg x, y: double;
     private void DECL() {
         System.out.println("DECL"); 
-        ID_LIST(true); // declare = true
+        ID_LIST(true); // indicates we are declaring identifiers
         match(Token.Type.COLON);
 
         if (currentToken.value.equals("int") || currentToken.value.equals("float") || currentToken.value.equals("double")) {

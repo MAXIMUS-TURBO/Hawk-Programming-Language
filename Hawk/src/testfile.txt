@@ -1,14 +1,6 @@
-program
-x, y: double;
+program x, y: int;
+
 begin
-input x; y := 1234567.0
-if (x > 0) then e := 0;
-while (x > 0) loop
-y := y * x; x := x -1;
-end loop; else
-e := 1;
-end if;
-output e, x, y; end;
-
-__ixl :=0;
-
+input x,y; y:=x+y;
+output y;
+end;

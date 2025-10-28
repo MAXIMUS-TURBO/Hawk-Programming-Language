@@ -18,15 +18,18 @@ public class Main
         
     //testing scanner
     try {
-            Scanner scanner = new Scanner("/workspaces/Hawk-Programming-Language/Hawk/src/testfile.txt"); // your source file
-            Token token;
-            do {
-                token = scanner.getNextToken();
-                // System.out.println(token); // prints using Token.toString()
-            } while (token.type != Token.Type.EOF);
-            // Token t;
-            // while ((t = scanner.getNextToken()).type != Token.Type.EOF) {
-            //     System.out.println(t);}
+            // Scanner scanner = new Scanner("/workspaces/Hawk-Programming-Language/Hawk/src/testfile.txt"); // your source file
+            // Token token;
+            // do {
+            //     token = scanner.getNextToken();
+            //     // System.out.println(token); // prints using Token.toString()
+            // } while (token.type != Token.Type.EOF);
+            // // Token t;
+            // // while ((t = scanner.getNextToken()).type != Token.Type.EOF) {
+            // //     System.out.println(t);}
+            Parser parser = new Parser("/workspaces/Hawk-Programming-Language/Hawk/src/testfile.txt");
+            parser.PROGRAM();
+            System.out.println("Parsing completed successfully.");
         } catch (IOException e) {
                 e.printStackTrace();
             }
