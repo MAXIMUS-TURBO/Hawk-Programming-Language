@@ -29,7 +29,7 @@ public class Main
             // //     System.out.println(t);}
             Parser parser = new Parser("/workspaces/Hawk-Programming-Language/Hawk/src/testfile.txt");
             parser.PROGRAM();
-            System.out.println("Parsing completed successfully.");
+            // System.out.println("Parsing completed successfully.");
         } catch (IOException e) {
                 e.printStackTrace();
             }

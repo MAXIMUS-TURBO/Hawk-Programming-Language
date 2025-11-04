@@ -47,6 +47,7 @@ public class Parser {
     public Parser(String filename) throws IOException {
         scanner = new Scanner(filename);
         currentToken = scanner.getNextToken(); //initialize first token
+        
     }
 
     //match to find expected type
@@ -95,8 +96,8 @@ public class Parser {
     private void DECL_SEC() {
         System.out.println("DECL_SEC");
         DECL();
-        while (currentToken.type == Token.Type.ID) { // More declarations
-            DECL();
+        if (currentToken.type == Token.Type.ID) { // More declarations
+            DECL_SEC();
         }
     }
     //Rule 03: DECL 🡪 ID_LIST : TYPE ; //match id list to its type eg x, y: double;
@@ -177,10 +178,11 @@ private void STMT() {
     } else if (currentToken.value.equals("output")) {
         OUTPUT();
     }else if (currentToken.value.equals("if")) {
-        System.out.println("tbc");
+        IFSTMT();
     }
     else if (currentToken.value.equals("while")) {
-        System.out.println("tbc");
+        // System.out.println("tbc");
+        WHILESTMT();
     }else {
         error("Invalid statement start: " + currentToken.value); //if statement does not start with ID, input, or output raise error
     }
@@ -202,11 +204,11 @@ private void OUTPUT() {
         ID_LIST(false);
     match(Token.Type.SEMI);
 }
-// Rule 08: ASSIGN 🡪	ID := EXPR ; //id followed by := followed by an expression 
+// Rule 08: ASSIGN 🡪	ID := EXPR ; //id followed by := (assignment operature) followed by an expression 
 private void ASSIGN() {
     System.out.println("ASSIGN");
     symbols.checkDeclared(currentToken.value, currentToken.line); //check if ID has been declared
-    match(Token.Type.ID);
+    match(Token.Type.ID); 
     match(Token.Type.ASSIGN);
     EXPR(); //match expression after assignment
     match(Token.Type.SEMI);
@@ -252,9 +254,48 @@ private void OPERAND() {
 
 // Rule 09: IFSTMT 🡪	if COMP then STMT_SEC end if ; |
 //                     if COMP then STMT_SEC else STMT_SEC end if ; 
+
+private void IFSTMT() {
+    System.out.println("IF_STMT");
+
+    match("if"); 
+    COMP(); //comparison after if
+    match("then");
+    STMT_SEC(); //statements after then
+    if (currentToken.value.equals("else")) {
+        match("else");
+        STMT_SEC(); //statements after else
+    }
+    match("end");
+    match("if");
+    match(Token.Type.SEMI);
+}
 // Rule 10: WHILESTMT 🡪	while COMP loop STMT_SEC end loop ;
+private void WHILESTMT() {
+    System.out.println("WHILE_STMT");
+
+    match("while"); 
+    COMP(); //comparison after while
+    match("loop");
+    STMT_SEC(); //statements after then
+    match("end");
+    match("loop");
+    match(Token.Type.SEMI);
+}
 // Rule 17: COMP 🡪 ( OPERAND = OPERAND ) | ( OPERAND <> OPERAND ) | ( OPERAND > OPERAND ) | ( OPERAND < OPERAND )
+private void COMP() {
+    System.out.println("COMP");
 
-
+    match(Token.Type.LPAREN); //comparison starts with (
+    OPERAND(); //first operand
+    if (currentToken.value.equals("=") || currentToken.value.equals("<>") ||
+        currentToken.value.equals(">") || currentToken.value.equals("<")) { //check for valid comparison operators
+        currentToken = scanner.getNextToken();
+        OPERAND(); //second operand
+        match(Token.Type.RPAREN); //comparison ends with )
+    } else {
+        error("Invalid comparison operator: " + currentToken.value);
+    }
+}
 
 }

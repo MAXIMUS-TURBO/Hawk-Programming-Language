@@ -31,10 +31,10 @@ public class Token {
     public String toString() {
         return "(" + type + ", " + value + ", line " + line + ")";
     }
-
+/*
     //contructor examples 
     //Token t = new Token(Token.Type.ID, "x", 3);
     //System.out.println(new Token(Token.Type.RESERVED, "program", 1)); 
                 //prints (RESERVED, program, line 1)
-
+ */
 }

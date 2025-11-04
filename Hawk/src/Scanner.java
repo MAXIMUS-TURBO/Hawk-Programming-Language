@@ -85,6 +85,7 @@ public class Scanner {
         }
 
         char c = source.charAt(pos);
+        
         //debugging line to see current character being processed
         // System.out.println("Current char: '" + c + "' at line " + lineNum); 
         // Track newlines
