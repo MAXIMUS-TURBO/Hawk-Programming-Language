@@ -107,7 +107,7 @@ public class Parser {
         match(Token.Type.COLON);
 
         if (currentToken.value.equals("int") || currentToken.value.equals("float") || currentToken.value.equals("double")) {
-            String type = currentToken.value;
+            // String type = currentToken.value;
             currentToken = scanner.getNextToken();
             match(Token.Type.SEMI);
         } else {
