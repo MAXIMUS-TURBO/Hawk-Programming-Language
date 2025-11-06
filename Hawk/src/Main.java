@@ -57,9 +57,9 @@ public class Main
             try {
                 Parser parser = new Parser(path);
                 parser.PROGRAM();
-                System.out.println("✅ Parsing completed successfully.");
+                // System.out.println("✅ Parsing completed successfully.");
             } catch (Exception e) {
-                System.out.println("❌ Error while parsing:");
+                System.out.println("File not found or an error occurred during parsing:");
                 System.out.println(e.getMessage());
             }
         }
