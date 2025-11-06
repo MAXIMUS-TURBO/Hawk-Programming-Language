@@ -43,7 +43,7 @@ import java.io.*;
 import java.nio.file.*;
 import java.util.*;
 
-public class Scanner {
+public class HawkScanner {
 
     private String source; //source file content
     private int pos = 0;
@@ -51,11 +51,10 @@ public class Scanner {
 
 
     //step 1 - read file
-    public Scanner(String filename) throws IOException {
+    public HawkScanner(String filename) throws IOException {
         // Reads the entire file into a single string
         source = Files.readString(Path.of(filename));
     }
-
     //create set of reserved words
     private static final ArrayList<String> RESERVED = new ArrayList<>
     (Arrays.asList("program", "begin", "end", "if", "then", "else","input", "output", "int", "double" ,"float" , "while", "loop"));

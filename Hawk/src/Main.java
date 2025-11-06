@@ -12,7 +12,7 @@
 
 
 ******************************************************************************/
-import java.io.*;
+import java.util.Scanner;
 public class Main 
 { 
     public static void main(String[] args) {
@@ -38,7 +38,34 @@ public class Main
 
 
     // Implement text based GUI
-    
+        
+       Scanner input = new Scanner(System.in);
+
+        System.out.println("=== Hawk Programming Language Interface ===");
+        System.out.println("Type a file path to run, or type 'quit' to exit.");
+        System.out.println("--------------------------------------------");
+
+        while (true) {
+            System.out.print("\nEnter the path of the source file: ");
+            String path = input.nextLine().trim();
+
+            if (path.equalsIgnoreCase("quit") || path.equalsIgnoreCase("q")) {
+                System.out.println("Exiting Hawk Interface. Goodbye!");
+                break;
+            }
+
+            try {
+                Parser parser = new Parser(path);
+                parser.PROGRAM();
+                System.out.println("✅ Parsing completed successfully.");
+            } catch (Exception e) {
+                System.out.println("❌ Error while parsing:");
+                System.out.println(e.getMessage());
+            }
+        }
+
+        input.close();
+
     }   
 }
 

@@ -39,13 +39,13 @@ import java.io.IOException;
 
 public class Parser {
     //parser will use scanner to get tokens and track declared variables in symbol table
-    private Scanner scanner;
+    private HawkScanner scanner;
     private Token currentToken;
     private SymbolTable symbols = new SymbolTable();
 
     //parser constructor is passed filename to create scanner object 
     public Parser(String filename) throws IOException {
-        scanner = new Scanner(filename);
+        scanner = new HawkScanner(filename);
         currentToken = scanner.getNextToken(); //initialize first token
         
     }
